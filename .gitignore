@@ -1,0 +1,15 @@
+__pycache__/
+node_modules/
+.vercel/
+.DS_Store
+Thumbs.db
+*.pyc
+*.db-wal
+*.db-shm
+.env
+*.swp
+scratch/
+write_css.py
+write_html.py
+main.py
+list_tables.py

@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>RailPro Gate – Railway Level-Crossing Corridor | TBM ⇄ CGL</title>
+  <meta name="description" content="RailPro Gate: AI-powered railway level-crossing status prediction, smart re-routing, and live EMU telemetry for the Tambaram–Chengalpattu Southern Railway corridor.">
+  <meta name="theme-color" content="#060913">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- RailwayGate stylesheet (self-contained, replaces styles.css on this page) -->
+  <link rel="stylesheet" href="railwaygate.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚧</text></svg>">
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════
+       INTRO SCREEN – RailPro Gate
+       ══════════════════════════════════════════ -->
+  <div id="introScreen" role="presentation" aria-hidden="true">
+
+    <!-- Stars -->
+    <div class="intro-stars"></div>
+
+    <!-- Brand -->
+    <div class="intro-brand">
+      <div class="intro-logo-badge">🚧</div>
+      <div class="intro-wordmark">RailPro Gate</div>
+      <div class="intro-tagline">Tambaram ⇄ Chengalpattu Corridor</div>
+    </div>
+
+    <!-- Animated Scene: Train + Barrier + Vehicles -->
+    <div class="intro-scene" id="introScene">
+
+      <!-- Road surface -->
+      <div class="road-base">
+        <div class="road-line"></div>
+      </div>
+
+      <!-- Track rails -->
+      <div class="track-base">
+        <div class="track-rail"></div>
+        <div class="track-rail"></div>
+        <div class="track-sleepers">
+          <div class="track-sleeper"></div><div class="track-sleeper"></div>
+          <div class="track-sleeper"></div><div class="track-sleeper"></div>
+          <div class="track-sleeper"></div><div class="track-sleeper"></div>
+          <div class="track-sleeper"></div><div class="track-sleeper"></div>
+          <div class="track-sleeper"></div><div class="track-sleeper"></div>
+          <div class="track-sleeper"></div><div class="track-sleeper"></div>
+          <div class="track-sleeper"></div><div class="track-sleeper"></div>
+          <div class="track-sleeper"></div><div class="track-sleeper"></div>
+          <div class="track-sleeper"></div><div class="track-sleeper"></div>
+          <div class="track-sleeper"></div><div class="track-sleeper"></div>
+        </div>
+      </div>
+
+      <!-- Gate post with barrier arms -->
+      <div class="gate-structure" id="gateStructure">
+        <div class="gate-post">
+          <div class="gate-lights">
+            <span class="gate-light green" id="gateGreenLight"></span>
+            <span class="gate-light red"   id="gateRedLight"></span>
+          </div>
+          <div class="barrier-arm-left"  id="barrierLeft"></div>
+          <div class="barrier-arm-right" id="barrierRight"></div>
+        </div>
+      </div>
+
+      <!-- EMU Train entering from left -->
+      <div class="emu-train" id="emuTrain">
+        <div class="emu-headlight"></div>
+        <div class="train-radar"></div>
+        <div class="train-cars">
+          <div class="car-body loco">
+            <div class="car-wheels">
+              <div class="wheel"></div><div class="wheel"></div>
+            </div>
+          </div>
+          <div class="car-body">
+            <div class="car-wheels">
+              <div class="wheel"></div><div class="wheel"></div>
+            </div>
+          </div>
+          <div class="car-body">
+            <div class="car-wheels">
+              <div class="wheel"></div><div class="wheel"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Waiting vehicles (right side of gate) -->
+      <div class="vehicles-queue" id="vehiclesQueue">
+        <div class="vehicle" id="veh1">
+          <div class="veh-body truck"></div>
+          <div class="veh-wheels"><div class="veh-wheel"></div><div class="veh-wheel"></div></div>
+        </div>
+        <div class="vehicle" id="veh2">
+          <div class="veh-body car-white"></div>
+          <div class="veh-wheels"><div class="veh-wheel"></div><div class="veh-wheel"></div></div>
+        </div>
+        <div class="vehicle" id="veh3">
+          <div class="veh-body car-red"></div>
+          <div class="veh-wheels"><div class="veh-wheel"></div><div class="veh-wheel"></div></div>
+        </div>
+        <div class="vehicle" id="veh4">
+          <div class="veh-body car-yellow"></div>
+          <div class="veh-wheels"><div class="veh-wheel"></div><div class="veh-wheel"></div></div>
+        </div>
+      </div>
+
+      <!-- Gate status text -->
+      <div class="gate-status-bar" id="introGateBar">🟢 LC 57 — OPEN</div>
+    </div>
+
+    <!-- Bottom labels -->
+    <div class="intro-corridor-label">Southern Railway · Tambaram (TBM) → Chengalpattu (CGL) · 50 km</div>
+    <button class="intro-skip-btn" id="introSkipBtn">Skip Intro ›</button>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       MAIN APP (shown after intro)
+       ══════════════════════════════════════════ -->
+  <div id="mainApp" style="opacity:0;transition:opacity 0.6s ease;height:100%;display:flex;flex-direction:column;">
+
+    <!-- Top Corridor Header -->
+    <header class="app-header" id="appHeader">
+      <div class="brand-block">
+        <div class="brand-icon-box"><span>🚧</span></div>
+        <div class="brand-text">
+          <h1>RAILPRO GATE <span class="corridor-badge">TBM ⇄ CGL</span></h1>
+          <div class="brand-sub">Level-Crossing Prediction, Traffic Estimation &amp; Smart Re-Routing</div>
+        </div>
+      </div>
+
+      <!-- Live Telemetry Strips -->
+      <div class="telemetry-strip">
+        <div class="telemetry-pill" id="trainTelemetryPill" title="Click to track EMU 4001 on map">
+          <span class="pulse-dot" id="trainPulseDot"></span>
+          <span id="trainStatusText">EMU 4001 • 52 km/h • SOUTHBOUND</span>
+        </div>
+        <div class="telemetry-pill" id="nextGateEtaPill">
+          <span>⏱️ Next LC ETA:</span>
+          <strong id="nextGateEtaText" style="color:var(--accent-cyan);">LC 50 (02m 14s)</strong>
+        </div>
+        <div class="telemetry-pill" id="mobileGeofencePill">
+          <span>📶 Geofence:</span>
+          <strong id="headerCellSignalsText" style="color:var(--accent-cyan);">250m Active</strong>
+        </div>
+        <button class="header-action-btn primary" id="btnSpotlightPotheriGate">
+          <span>🎯</span> LC 57
+        </button>
+        <button class="api-key-badge-pill live-pill" id="btnOpenApiKeyModal">
+          <span class="live-pill-dot"></span>
+          <span id="apiKeyHeaderStatus">Live (No Key)</span>
+        </button>
+        <button class="header-action-btn" id="btnOpenReportModal"><span>📢</span> Report</button>
+        <button class="header-action-btn" id="audioToggleBtn"><span id="audioIcon">🔊</span></button>
+      </div>
+
+      <!-- Hamburger (mobile) -->
+      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </header>
+
+    <!-- Mobile compact toolbar (scrollable) -->
+    <div class="mobile-toolbar-row" id="mobileToolbar">
+      <button class="map-tool-btn" id="btnFitCorridorM">📍 Corridor</button>
+      <button class="map-tool-btn highlight-train" id="btnTrackTrainM">🚆 Train</button>
+      <button class="map-tool-btn highlight-gate" id="btnSpotlightLC57M">🎯 LC 57</button>
+      <button class="map-tool-btn active" id="btnToggleRoadTrafficM">🚗 Traffic</button>
+      <button class="map-tool-btn" id="btnLocateUserM">🎯 My Loc</button>
+      <button class="map-tool-btn" id="btnSimPassingLC57M">⚡ Sim</button>
+      <select class="form-select" id="stationJumpSelectorM" style="font-size:0.72rem;padding:0.3rem 0.5rem;">
+        <option value="" disabled selected>🚉 Jump…</option>
+        <option value="12.92559,80.12711">Tambaram (TBM)</option>
+        <option value="12.90157,80.09682">Perungalathur</option>
+        <option value="12.88315,80.08053">Vandalur</option>
+        <option value="12.86508,80.06730">Urapakkam</option>
+        <option value="12.84330,80.05638">Guduvanchery</option>
+        <option value="12.82133,80.04430">Potheri ⭐</option>
+        <option value="12.81327,80.03440">Kattankulathur ⭐</option>
+        <option value="12.79558,80.02430">Maraimalai Nagar</option>
+        <option value="12.76068,80.00540">Singaperumal Koil</option>
+        <option value="12.72820,79.99240">Paranur</option>
+        <option value="12.69240,79.97630">Chengalpattu (CGL)</option>
+      </select>
+    </div>
+
+    <!-- Workspace Grid -->
+    <div class="app-workspace" id="appWorkspace">
+
+      <!-- Map -->
+      <div class="map-container-wrap">
+        <div id="corridorMap"></div>
+
+        <!-- Floating HUD (desktop) -->
+        <div class="map-floating-hud">
+          <div class="map-hud-title"><span>📍</span> Tambaram → Chengalpattu Corridor</div>
+          <div class="map-hud-stats">
+            <span>STATIONS: <strong>11</strong></span>
+            <span>CROSSINGS: <strong>9 LCs + 1 ROB</strong></span>
+            <span>GEOFENCE: <strong>250m</strong></span>
+          </div>
+        </div>
+
+        <!-- Floating Toolbar (desktop) -->
+        <div class="map-floating-toolbar">
+          <button class="map-tool-btn" id="btnFitCorridor">📍 Corridor</button>
+          <button class="map-tool-btn highlight-train" id="btnTrackTrain">🚆 Train</button>
+          <button class="map-tool-btn highlight-gate" id="btnSpotlightLC57">🎯 LC 57</button>
+          <button class="map-tool-btn active" id="btnToggleRoadTraffic">🚗 Road Traffic</button>
+          <button class="map-tool-btn" id="btnToggleFullMap">⛶ Full Map</button>
+          <button class="map-tool-btn" id="btnLocateUser">🎯 My Location</button>
+          <button class="map-tool-btn" id="btnSimPassingLC57">⚡ Pass Sim</button>
+          <select class="form-select" id="stationJumpSelector" style="padding:0.35rem 0.6rem;font-size:0.725rem;font-weight:700;height:auto;">
+            <option value="" disabled selected>🚉 Stations...</option>
+            <option value="12.92559,80.12711">1. Tambaram (TBM)</option>
+            <option value="12.90157,80.09682">2. Perungalathur (PRGL)</option>
+            <option value="12.88315,80.08053">3. Vandalur (VDR)</option>
+            <option value="12.86508,80.06730">4. Urapakkam (UPM)</option>
+            <option value="12.84330,80.05638">5. Guduvanchery (GI)</option>
+            <option value="12.82133,80.04430">⭐ 6. Potheri (POTR)</option>
+            <option value="12.81327,80.03440">⭐ 7. Kattankulathur (CTM)</option>
+            <option value="12.79558,80.02430">8. Maraimalai Nagar (MMNK)</option>
+            <option value="12.76068,80.00540">9. Singaperumal Koil (SKL)</option>
+            <option value="12.72820,79.99240">10. Paranur (PWU)</option>
+            <option value="12.69240,79.97630">11. Chengalpattu Jn (CGL)</option>
+          </select>
+          <select class="form-select" id="mapLayerSelector" style="padding:0.35rem 0.6rem;font-size:0.725rem;font-weight:700;height:auto;">
+            <option value="osm" selected>🚆 OpenStreetMap (Free)</option>
+            <option value="esri_street">🗺️ World Street (Esri)</option>
+            <option value="satellite">🛰️ Satellite (Esri)</option>
+            <option value="esri_topo">🏔️ Topo Map (Esri)</option>
+          </select>
+        </div>
+
+        <!-- Train Passing Side Card -->
+        <div class="train-passing-side-card" id="trainPassingBanner">
+          <div class="passing-card-top">
+            <div class="passing-card-badge">
+              <span class="passing-live-pulse"></span><span>LIVE TRAIN PASSING</span>
+            </div>
+            <button class="passing-card-close" id="btnClosePassingBanner">✕</button>
+          </div>
+          <div class="passing-card-body">
+            <div class="passing-card-gate" id="trainPassingGateTitle">LC 57 (Potheri ⇄ Kattankulathur)</div>
+            <div class="passing-card-status" id="trainPassingText">TRAIN APPROACHING • BARRIER ESTIMATED CLOSED</div>
+            <div class="passing-card-actions">
+              <button class="passing-mini-btn" id="btnZoomPassingGate">🎯 Zoom to Gate</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- User GPS HUD -->
+        <div class="user-live-match-hud" id="userLiveMatchHud">
+          <div class="user-hud-header">
+            <div class="user-hud-title">
+              <div class="user-hud-status-dot"></div><span>LIVE GPS MATCH</span>
+            </div>
+            <button class="user-hud-refresh" id="btnRefreshUserGPS">🔄 Refresh</button>
+          </div>
+          <div class="user-hud-content">
+            <div class="user-hud-coords" id="userLiveCoordsText">Detecting live GPS location...</div>
+            <div class="user-hud-nearest-box">
+              <div class="user-hud-label">NEAREST RAILWAY GATE:</div>
+              <div class="user-hud-gate-name" id="userNearestGateName">Matching nearest crossing...</div>
+              <div class="user-hud-metrics">
+                <span class="user-hud-dist" id="userNearestDist">-- m away</span>
+                <span class="gate-status-pill open" id="userNearestStatusPill">--</span>
+              </div>
+            </div>
+            <div class="user-hud-actions">
+              <button class="user-hud-btn primary" id="btnCenterUser">📍 Center on Me</button>
+              <button class="user-hud-btn" id="btnRouteFromLiveUser">🧭 Route from Here</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="map-floating-legend">
+          <div class="legend-item"><span class="legend-symbol">🛑</span> Closed (&lt;2m)</div>
+          <div class="legend-item"><span class="legend-symbol">⚠️</span> Closing (&lt;3.5m)</div>
+          <div class="legend-item"><span class="legend-symbol">⏳</span> Caution (&lt;6.5m)</div>
+          <div class="legend-item"><span class="legend-symbol">🟢</span> Open</div>
+          <div class="legend-item" style="border-left:1px solid rgba(255,255,255,0.15);padding-left:0.6rem;">
+            <span class="road-legend-bar red"></span> Heavy Queue
+          </div>
+          <div class="legend-item"><span class="road-legend-bar green"></span> Free Flow</div>
+          <div class="legend-item" style="border-left:1px solid rgba(255,255,255,0.15);padding-left:0.6rem;">
+            <span>📶 250m Geofence</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar (Desktop) -->
+      <aside class="sidebar-container" id="sidebar">
+        <div class="sidebar-tab-nav">
+          <button class="side-tab-btn active" data-tab="tab-gates" id="tabBtnGates"><span>🚥</span> Live Gates</button>
+          <button class="side-tab-btn" data-tab="tab-reroute" id="tabBtnReroute"><span>🧭</span> Re-Route</button>
+          <button class="side-tab-btn" data-tab="tab-barrier" id="tabBtnBarrier"><span>🚧</span> Barrier Sim</button>
+        </div>
+
+        <!-- Tab: Gates -->
+        <div class="sidebar-tab-content active" id="tab-gates">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:0.8rem;font-weight:700;color:#94a3b8;text-transform:uppercase;">Real-Time Predictions</span>
+            <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--accent-cyan);" id="lastRefreshTime">LIVE SYNC 3s</span>
+          </div>
+
+          <div class="potheri-spotlight-card" id="potheriSpotlightCard">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+              <div>
+                <span class="spotlight-tag">📍 GATE BETWEEN POTHERI &amp; KATTANKULATHUR</span>
+                <h3 style="font-family:var(--font-brand);font-size:1.05rem;color:#fff;margin-top:0.2rem;">
+                  LC 57 – Potheri / Kattankulathur (SRM Gate)
+                </h3>
+                <p style="font-size:0.75rem;color:#94a3b8;">
+                  Midpoint between <strong>Potheri (POTR)</strong> &amp; <strong>Kattankulathur (CTM)</strong>
+                </p>
+              </div>
+              <span class="gate-status-pill open" id="spotlightStatusPill">OPEN</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;background:rgba(0,0,0,0.3);padding:0.4rem 0.6rem;border-radius:6px;font-size:0.75rem;margin-top:0.4rem;">
+              <div>Distance: <strong id="spotlightDist" style="color:#fff;font-family:var(--font-mono);">--</strong></div>
+              <div>ETA: <strong id="spotlightEta" style="color:var(--accent-cyan);font-family:var(--font-mono);">--</strong></div>
+            </div>
+            <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
+              <button class="header-action-btn primary" id="btnFocusPotheriGate" style="flex:1;justify-content:center;font-size:0.75rem;">🎯 Fly to Gate</button>
+              <button class="header-action-btn" id="btnSimPotheriBarrier" style="justify-content:center;font-size:0.75rem;">🚧 Barrier</button>
+            </div>
+          </div>
+
+          <div class="gate-card-list" id="gateCardList"></div>
+        </div>
+
+        <!-- Tab: Re-Route -->
+        <div class="sidebar-tab-content" id="tab-reroute">
+          <div class="reroute-box">
+            <div style="display:flex;align-items:center;gap:0.5rem;">
+              <span style="font-size:1.25rem;">🧭</span>
+              <div>
+                <h3 style="font-family:var(--font-brand);font-size:1.1rem;color:#fff;">Smart Corridor Re-Router</h3>
+                <p style="font-size:0.75rem;color:#94a3b8;">Avoid closed gates &amp; heavy queue penalties automatically.</p>
+              </div>
+            </div>
+            <div class="form-group">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.35rem;">
+                <label class="form-label" for="rerouteOrigin" style="margin-bottom:0;">Origin</label>
+                <button class="btn-gps-origin" id="btnUseGpsForOrigin" type="button" style="font-size:0.725rem;font-weight:700;color:var(--accent-cyan);background:rgba(0,242,254,0.1);border:1px solid rgba(0,242,254,0.3);border-radius:4px;padding:0.15rem 0.5rem;cursor:pointer;">📍 Live GPS</button>
+              </div>
+              <select class="form-select" id="rerouteOrigin">
+                <option value="12.92559,80.12711">Tambaram East (GST Road)</option>
+                <option value="12.90157,80.09682" selected>Perungalathur Junction</option>
+                <option value="12.88315,80.08053">Vandalur Crescent Area</option>
+                <option value="12.86508,80.06730">Urapakkam High Road</option>
+                <option value="12.84330,80.05638">Guduvanchery Bazaar</option>
+                <option value="12.82133,80.04430">Potheri / SRM University</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="rerouteDest">Destination</label>
+              <select class="form-select" id="rerouteDest">
+                <option value="12.82133,80.04430" selected>Potheri / SRM Tech Park</option>
+                <option value="12.79558,80.02430">Maraimalai Nagar Industrial</option>
+                <option value="12.76068,80.00540">Singaperumal Koil Town</option>
+                <option value="12.72820,79.99240">Mahindra World City (MWC)</option>
+                <option value="12.69240,79.97630">Chengalpattu Junction</option>
+              </select>
+            </div>
+            <button class="header-action-btn primary" id="btnCalculateReroute" style="width:100%;justify-content:center;padding:0.75rem;">⚡ Compute Optimal Crossing</button>
+            <div id="rerouteResultsBox" style="display:none;">
+              <div class="reroute-results-card">
+                <div class="reroute-best-badge">⭐ RECOMMENDED FASTEST CROSSING</div>
+                <h4 id="recGateName" style="font-family:var(--font-brand);font-size:1.1rem;color:#fff;">ROB_VDR – Vandalur Over Bridge</h4>
+                <div style="font-size:0.75rem;color:var(--accent-cyan);" id="recGateStatus">ALWAYS OPEN (ROB/FLYOVER)</div>
+                <div class="reroute-breakdown">
+                  <div><div class="val" id="recDriveTime">4m 12s</div><div class="lbl">Drive Time</div></div>
+                  <div><div class="val" id="recWaitPenalty" style="color:var(--status-open);">0m 00s</div><div class="lbl">Wait Penalty</div></div>
+                  <div><div class="val" id="recTotalTime" style="color:var(--accent-cyan);">4m 30s</div><div class="lbl">Total ETA</div></div>
+                </div>
+              </div>
+              <div style="margin-top:0.85rem;">
+                <span style="font-size:0.75rem;font-weight:700;color:#94a3b8;text-transform:uppercase;">Alternative Crossings</span>
+                <div id="rerouteAlternativesList" style="display:flex;flex-direction:column;gap:0.4rem;margin-top:0.4rem;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Barrier Sim -->
+        <div class="sidebar-tab-content" id="tab-barrier">
+          <div class="barrier-visual-deck">
+            <div style="display:flex;align-items:center;justify-content:space-between;width:100%;">
+              <h3 style="font-family:var(--font-brand);font-size:1.1rem;">Mechanical Barrier State</h3>
+              <span id="barrierTargetGate" style="font-family:var(--font-mono);font-size:0.75rem;color:var(--accent-cyan);">LC 50</span>
+            </div>
+            <p style="font-size:0.75rem;color:#94a3b8;">Simulated interlocked boom barrier based on live EMU train proximity (&lt;400m block).</p>
+            <div class="boom-barrier-graphic">
+              <div class="barrier-stand">
+                <div class="barrier-pivot"></div>
+                <div class="barrier-arm open" id="barrierArm"></div>
+              </div>
+              <div class="barrier-signal-lights">
+                <span class="barrier-lamp red" id="lampRed"></span>
+                <span class="barrier-lamp green active" id="lampGreen"></span>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:0.4rem;width:100%;">
+              <div style="display:flex;justify-content:space-between;font-size:0.8rem;">
+                <span style="color:#94a3b8;">Barrier Status:</span>
+                <strong id="barrierStatusLabel" style="color:var(--status-open);">OPEN (CLEAR ROAD)</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:0.8rem;">
+                <span style="color:#94a3b8;">Track Signal Interlock:</span>
+                <strong style="color:var(--accent-cyan);">AUTOMATIC FAIL-SAFE</strong>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;width:100%;margin-top:0.5rem;">
+              <button class="header-action-btn" id="btnTestLowerBarrier" style="justify-content:center;font-size:0.75rem;">🛑 Force Lower</button>
+              <button class="header-action-btn" id="btnTestRaiseBarrier" style="justify-content:center;font-size:0.75rem;">🟢 Force Raise</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- ── Mobile Bottom Sheet ── -->
+    <div id="mobileBottomSheet" aria-modal="true" role="dialog" aria-label="Gate Controls">
+      <div class="sheet-drag-handle" id="sheetDragHandle"></div>
+      <div class="sheet-tab-nav">
+        <button class="sheet-tab-btn active" data-sheet="sheet-gates">🚥 Live Gates</button>
+        <button class="sheet-tab-btn" data-sheet="sheet-reroute">🧭 Re-Route</button>
+        <button class="sheet-tab-btn" data-sheet="sheet-barrier">🚧 Barrier</button>
+      </div>
+
+      <!-- Sheet: Gates -->
+      <div class="sheet-content active" id="sheet-gates">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:0.78rem;font-weight:700;color:#94a3b8;text-transform:uppercase;">Real-Time Predictions</span>
+          <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--accent-cyan);" id="mLastRefreshTime">LIVE SYNC 3s</span>
+        </div>
+        <div class="potheri-spotlight-card">
+          <span class="spotlight-tag">📍 GATE BETWEEN POTHERI &amp; KATTANKULATHUR</span>
+          <h3 style="font-family:var(--font-brand);font-size:0.95rem;color:#fff;margin-top:0.15rem;">LC 57 – Potheri / Kattankulathur</h3>
+          <div style="display:flex;gap:0.5rem;margin-top:0.45rem;">
+            <button class="header-action-btn primary" id="mBtnFocusPotheriGate" style="flex:1;justify-content:center;font-size:0.72rem;">🎯 Fly to Gate</button>
+            <span class="gate-status-pill open" id="mSpotlightStatusPill">OPEN</span>
+          </div>
+        </div>
+        <div class="gate-card-list" id="mGateCardList"></div>
+      </div>
+
+      <!-- Sheet: Re-Route -->
+      <div class="sheet-content" id="sheet-reroute">
+        <div class="reroute-box" style="background:transparent;border:none;padding:0;gap:0.6rem;">
+          <h3 style="font-family:var(--font-brand);font-size:1rem;color:#fff;">🧭 Smart Re-Router</h3>
+          <div class="form-group">
+            <label class="form-label" for="mRerouteOrigin">Origin</label>
+            <select class="form-select" id="mRerouteOrigin">
+              <option value="12.92559,80.12711">Tambaram East</option>
+              <option value="12.90157,80.09682" selected>Perungalathur Jct.</option>
+              <option value="12.82133,80.04430">Potheri / SRM</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="mRerouteDest">Destination</label>
+            <select class="form-select" id="mRerouteDest">
+              <option value="12.82133,80.04430" selected>Potheri / SRM</option>
+              <option value="12.72820,79.99240">Mahindra World City</option>
+              <option value="12.69240,79.97630">Chengalpattu Jct.</option>
+            </select>
+          </div>
+          <button class="header-action-btn primary" id="mBtnCalculateReroute" style="width:100%;justify-content:center;padding:0.7rem;">⚡ Compute Route</button>
+          <div id="mRerouteResults" style="display:none;">
+            <div class="reroute-results-card">
+              <div class="reroute-best-badge">⭐ RECOMMENDED CROSSING</div>
+              <h4 id="mRecGateName" style="font-family:var(--font-brand);font-size:1rem;color:#fff;">ROB_VDR – Vandalur Flyover</h4>
+              <div class="reroute-breakdown">
+                <div><div class="val" id="mRecDriveTime">--</div><div class="lbl">Drive</div></div>
+                <div><div class="val" id="mRecWaitPenalty" style="color:var(--status-open);">--</div><div class="lbl">Wait</div></div>
+                <div><div class="val" id="mRecTotalTime" style="color:var(--accent-cyan);">--</div><div class="lbl">ETA</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sheet: Barrier -->
+      <div class="sheet-content" id="sheet-barrier">
+        <div class="barrier-visual-deck" style="background:transparent;border:none;padding:0;">
+          <h3 style="font-family:var(--font-brand);font-size:1rem;align-self:flex-start;">🚧 Barrier State</h3>
+          <div class="boom-barrier-graphic">
+            <div class="barrier-stand">
+              <div class="barrier-pivot"></div>
+              <div class="barrier-arm open" id="mBarrierArm"></div>
+            </div>
+            <div class="barrier-signal-lights">
+              <span class="barrier-lamp red" id="mLampRed"></span>
+              <span class="barrier-lamp green active" id="mLampGreen"></span>
+            </div>
+          </div>
+          <strong id="mBarrierStatusLabel" style="color:var(--status-open);font-size:0.85rem;">OPEN (CLEAR ROAD)</strong>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;width:100%;">
+            <button class="header-action-btn" id="mBtnTestLowerBarrier" style="justify-content:center;font-size:0.75rem;">🛑 Lower</button>
+            <button class="header-action-btn" id="mBtnTestRaiseBarrier" style="justify-content:center;font-size:0.75rem;">🟢 Raise</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAB -->
+    <button id="sheetFab" aria-label="Open Gate Controls">🚥 Live Gates &amp; Routes</button>
+
+    <!-- ── Modals ── -->
+    <div class="modal-backdrop" id="reportModal">
+      <div class="modal-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <h3 style="font-family:var(--font-brand);font-size:1.2rem;">📢 Crowdsource Gate Report</h3>
+          <button id="btnCloseReportModal" style="background:none;font-size:1.2rem;color:#94a3b8;border:none;cursor:pointer;">✕</button>
+        </div>
+        <p style="font-size:0.8rem;color:#94a3b8;">Validate the live barrier status to help fellow commuters.</p>
+        <div class="form-group">
+          <label class="form-label" for="reportGateSelect">Select Level Crossing</label>
+          <select class="form-select" id="reportGateSelect">
+            <option value="LC47">LC 47 – Perungalathur</option>
+            <option value="LC50">LC 50 – Vandalur Crescent</option>
+            <option value="LC52">LC 52 – Urapakkam West</option>
+            <option value="LC55">LC 55 – Guduvanchery Bazaar</option>
+            <option value="LC57">LC 57 – Potheri Thailavaram</option>
+            <option value="LC59">LC 59 – Kattankulathur East</option>
+            <option value="LC61">LC 61 – Maraimalai Nagar</option>
+            <option value="LC64">LC 64 – Singaperumal Koil</option>
+            <option value="LC67">LC 67 – Paranur MWC</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reportStatusSelect">Gate Condition</label>
+          <select class="form-select" id="reportStatusSelect">
+            <option value="OPEN">🟢 Gate is OPEN (Traffic Moving)</option>
+            <option value="CLOSED">🔴 Gate is CLOSED (Train Passing)</option>
+            <option value="JAMMED">⚠️ Heavy Traffic Jam at Gate</option>
+          </select>
+        </div>
+        <button class="header-action-btn primary" id="btnSubmitGateReport" style="justify-content:center;padding:0.8rem;">🚀 Submit Live Verification</button>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="apiKeyModal">
+      <div class="modal-card" style="width:520px;max-width:95vw;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <h3 style="font-family:var(--font-brand);font-size:1.25rem;display:flex;align-items:center;gap:0.5rem;">
+            <span style="color:var(--status-open);">●</span> System Status: Live &amp; Operational
+          </h3>
+          <button id="btnCloseApiKeyModal" style="background:none;font-size:1.2rem;color:#94a3b8;border:none;cursor:pointer;">✕</button>
+        </div>
+        <p style="font-size:0.8rem;color:#94a3b8;">This application runs 100% locally. <strong style="color:var(--status-open);">No API Key Required!</strong></p>
+        <div class="api-modal-section">
+          <h4 style="color:var(--status-open);">🗺️ OpenStreetMap &amp; Esri: 100% Active</h4>
+          <div style="background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.3);border-radius:6px;padding:0.5rem 0.75rem;font-size:0.75rem;color:var(--status-open);font-family:var(--font-mono);font-weight:700;margin-top:0.5rem;">
+            ✔ ZERO API KEY REQUIRED • 100% UNLOCKED
+          </div>
+        </div>
+        <div class="api-modal-section">
+          <h4>⚡ RailPro Gate Corridor Engine</h4>
+          <p style="font-size:0.75rem;color:#94a3b8;">Connected live to Tambaram (TBM) ⇄ Chengalpattu (CGL) with real-time EMU 4001 kinematics &amp; Haversine spatial prediction.</p>
+          <div class="code-snippet-box" id="activeDevKeyBox">rg_live_tbm_cgl_84920482 • AUTHENTICATED</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.25rem;">
+            <span style="font-size:0.7rem;color:var(--status-open);font-family:var(--font-mono);font-weight:700;">● ALL 10 CROSSINGS &amp; 11 STATIONS ONLINE</span>
+            <button class="header-action-btn primary" id="btnDismissStatusModal" style="font-size:0.725rem;padding:0.35rem 0.8rem;">✓ All Good</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+  </div><!-- /#mainApp -->
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="app.js?v=20260908_rg_v1"></script>
+
+  <script>
+  /* ══════════════════════════════════════
+     RAILWAYGATE – INTRO CONTROLLER
+     Sequence:
+      0.8s  → train starts moving
+      2.0s  → barriers lower, vehicles appear, status = CLOSED
+      3.8s  → train clears gate
+      4.2s  → barriers rise, status = OPEN
+      4.8s  → vehicles drive off
+      5.8s  → scene fades, main app fades in
+  ══════════════════════════════════════ */
+  (function(){
+    var intro      = document.getElementById('introScreen');
+    var mainApp    = document.getElementById('mainApp');
+    var barrierL   = document.getElementById('barrierLeft');
+    var barrierR   = document.getElementById('barrierRight');
+    var gateBar    = document.getElementById('introGateBar');
+    var greenLight = document.getElementById('gateGreenLight');
+    var redLight   = document.getElementById('gateRedLight');
+    var vehicles   = ['veh1','veh2','veh3','veh4'].map(function(id){ return document.getElementById(id); });
+    var skipBtn    = document.getElementById('introSkipBtn');
+
+    var finished = false;
+
+    function showMain(){
+      if(finished) return;
+      finished = true;
+      intro.classList.add('fade-out');
+      mainApp.style.opacity = '1';
+    }
+
+    // ── Barrier close sequence ──
+    setTimeout(function(){
+      barrierL.classList.add('lowered');
+      barrierR.classList.add('lowered');
+      gateBar.classList.add('closed');
+      gateBar.textContent = '🔴 LC 57 — CLOSED (TRAIN PASSING)';
+      greenLight.style.display = 'none';
+      redLight.style.display = 'block';
+      // Show vehicles
+      vehicles.forEach(function(v, i){
+        setTimeout(function(){ if(v) v.classList.add('visible'); }, i * 140);
+      });
+    }, 2000);
+
+    // ── Train clears, barrier rises ──
+    setTimeout(function(){
+      barrierL.classList.remove('lowered');
+      barrierR.classList.remove('lowered');
+      gateBar.classList.remove('closed');
+      gateBar.textContent = '🟢 LC 57 — OPEN';
+      greenLight.style.display = 'block';
+      redLight.style.display = 'none';
+    }, 4200);
+
+    // ── Vehicles drive off ──
+    setTimeout(function(){
+      vehicles.forEach(function(v, i){
+        setTimeout(function(){ if(v) v.classList.add('driving-off'); }, i * 180);
+      });
+    }, 4800);
+
+    // ── Auto-dismiss ──
+    setTimeout(showMain, 6200);
+
+    // ── Skip button ──
+    skipBtn.addEventListener('click', showMain);
+
+    /* ── Bridge mobile re-route results to desktop ── */
+    var mBtn = document.getElementById('mBtnCalculateReroute');
+    var mRes = document.getElementById('mRerouteResults');
+    if(mBtn && mRes){
+      mBtn.addEventListener('click', function(){
+        mRes.style.display = 'block';
+        var mGate = document.getElementById('mRecGateName');
+        var mDrive= document.getElementById('mRecDriveTime');
+        var mWait = document.getElementById('mRecWaitPenalty');
+        var mEta  = document.getElementById('mRecTotalTime');
+        // Read from desktop compute if available
+        var dGate = document.getElementById('recGateName');
+        var dDrive= document.getElementById('recDriveTime');
+        var dWait = document.getElementById('recWaitPenalty');
+        var dEta  = document.getElementById('recTotalTime');
+        if(dGate && mGate){ mGate.textContent = dGate.textContent; }
+        if(dDrive && mDrive){ mDrive.textContent = dDrive.textContent; }
+        if(dWait && mWait){ mWait.textContent = dWait.textContent; }
+        if(dEta && mEta){ mEta.textContent = dEta.textContent; }
+      });
+    }
+
+    /* ── FAB / Bottom Sheet ── */
+    var fab   = document.getElementById('sheetFab');
+    var sheet = document.getElementById('mobileBottomSheet');
+    var sheetTabs = document.querySelectorAll('.sheet-tab-btn');
+    var sheetContents = document.querySelectorAll('.sheet-content');
+
+    if(fab && sheet){
+      fab.addEventListener('click', function(){
+        sheet.classList.toggle('open');
+        fab.style.display = sheet.classList.contains('open') ? 'none' : 'inline-flex';
+      });
+
+      // Close sheet on drag handle tap
+      var handle = document.getElementById('sheetDragHandle');
+      if(handle){ handle.addEventListener('click', function(){ sheet.classList.remove('open'); fab.style.display='inline-flex'; }); }
+
+      // Sheet tab switching
+      sheetTabs.forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var target = btn.getAttribute('data-sheet');
+          sheetTabs.forEach(function(b){ b.classList.remove('active'); });
+          sheetContents.forEach(function(c){ c.classList.remove('active'); });
+          btn.classList.add('active');
+          var el = document.getElementById(target);
+          if(el) el.classList.add('active');
+        });
+      });
+    }
+
+    /* ── Hamburger (mobile header menu) ── */
+    var hamburger = document.getElementById('hamburgerBtn');
+    if(hamburger && sheet){
+      hamburger.addEventListener('click', function(){
+        hamburger.classList.toggle('open');
+        sheet.classList.toggle('open');
+        if(fab) fab.style.display = sheet.classList.contains('open') ? 'none' : 'inline-flex';
+      });
+    }
+
+    /* ── Mirror mobile toolbar buttons to desktop ── */
+    function mirrorBtn(mId, dId){
+      var mb = document.getElementById(mId);
+      var db = document.getElementById(dId);
+      if(mb && db){ mb.addEventListener('click', function(){ db.click(); }); }
+    }
+    mirrorBtn('btnFitCorridorM',      'btnFitCorridor');
+    mirrorBtn('btnTrackTrainM',       'btnTrackTrain');
+    mirrorBtn('btnSpotlightLC57M',    'btnSpotlightLC57');
+    mirrorBtn('btnToggleRoadTrafficM','btnToggleRoadTraffic');
+    mirrorBtn('btnLocateUserM',       'btnLocateUser');
+    mirrorBtn('btnSimPassingLC57M',   'btnSimPassingLC57');
+    mirrorBtn('mBtnFocusPotheriGate', 'btnFocusPotheriGate');
+    mirrorBtn('mBtnTestLowerBarrier', 'btnTestLowerBarrier');
+    mirrorBtn('mBtnTestRaiseBarrier', 'btnTestRaiseBarrier');
+
+    /* Mirror station jump (mobile) */
+    var mJump = document.getElementById('stationJumpSelectorM');
+    var dJump = document.getElementById('stationJumpSelector');
+    if(mJump && dJump){
+      mJump.addEventListener('change', function(){
+        dJump.value = mJump.value;
+        dJump.dispatchEvent(new Event('change'));
+      });
+    }
+
+    /* Mirror mobile gate list rendering */
+    function syncMobileGateList(){
+      var src  = document.getElementById('gateCardList');
+      var dest = document.getElementById('mGateCardList');
+      if(src && dest){
+        dest.innerHTML = src.innerHTML;
+        dest.style.pointerEvents = 'auto';
+      }
+      var srcPill  = document.getElementById('spotlightStatusPill');
+      var destPill = document.getElementById('mSpotlightStatusPill');
+      if(srcPill && destPill){
+        destPill.className = srcPill.className;
+        destPill.textContent = srcPill.textContent;
+      }
+    }
+    // Observe desktop gate list for changes and sync to mobile
+    var gateListEl = document.getElementById('gateCardList');
+    if(gateListEl && window.MutationObserver){
+      new MutationObserver(syncMobileGateList).observe(gateListEl, {childList:true, subtree:true, characterData:true});
+    }
+
+    /* Mirror barrier state to mobile panel */
+    var dBarrierArm   = document.getElementById('barrierArm');
+    var mBarrierArm   = document.getElementById('mBarrierArm');
+    var dBarrierLabel = document.getElementById('barrierStatusLabel');
+    var mBarrierLabel = document.getElementById('mBarrierStatusLabel');
+    var dLampRed      = document.getElementById('lampRed');
+    var mLampRed      = document.getElementById('mLampRed');
+    var dLampGreen    = document.getElementById('lampGreen');
+    var mLampGreen    = document.getElementById('mLampGreen');
+    function syncBarrierMobile(){
+      if(dBarrierArm && mBarrierArm){ mBarrierArm.className = dBarrierArm.className; }
+      if(dBarrierLabel && mBarrierLabel){ mBarrierLabel.textContent = dBarrierLabel.textContent; mBarrierLabel.style.color = dBarrierLabel.style.color; }
+      if(dLampRed && mLampRed){ mLampRed.className = dLampRed.className; }
+      if(dLampGreen && mLampGreen){ mLampGreen.className = dLampGreen.className; }
+    }
+    if(dBarrierArm && window.MutationObserver){
+      new MutationObserver(syncBarrierMobile).observe(dBarrierArm.parentElement, {subtree:true, attributes:true, characterData:true});
+    }
+
+  })();
+  </script>
+
+</body>
+</html>
