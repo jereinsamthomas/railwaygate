@@ -21,6 +21,7 @@ const GATES = [
   {id:'LC52',   name:'LC 52 - Urapakkam West',             lat:12.8555, lon:80.0638, is_rob:false, station_before:'Urapakkam',       station_after:'Guduvanchery'    },
   {id:'LC55',   name:'LC 55 - Guduvanchery Bazaar',        lat:12.8329, lon:80.0473, is_rob:false, station_before:'Guduvanchery',    station_after:'Potheri'         },
   {id:'LC57',   name:'LC 57 - Potheri/SRM Gate',           lat:12.8128, lon:80.0312, is_rob:false, station_before:'Potheri',         station_after:'Kattankulathur'  },
+    {id:'LC58',name:'LC 58 - Kattankulathur West',lat:12.810208,lon:80.02972,is_rob:false,station_before:'Potheri',station_after:'Kattankulathur'},
   {id:'LC59',   name:'LC 59 - Kattankulathur East',        lat:12.8005, lon:80.0218, is_rob:false, station_before:'Kattankulathur',  station_after:'Maraimalai Nagar'},
   {id:'LC61',   name:'LC 61 - Maraimalai Nagar Ind.',      lat:12.7780, lon:80.0090, is_rob:false, station_before:'Maraimalai Nagar',station_after:'Singaperumal Koil'},
   {id:'LC64',   name:'LC 64 - Singaperumal Koil',          lat:12.7455, lon:79.9920, is_rob:false, station_before:'Singaperumal Koil',station_after:'Paranur'        },

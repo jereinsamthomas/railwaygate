@@ -210,11 +210,26 @@
     },
     {
       gate_id: 'LC57', gate_name: 'LC 57 - Potheri / Kattankulathur (SRM Gate)', station_before: 'Potheri', station_after: 'Kattankulathur',
-      lat: 12.813366, lon: 80.031646, is_rob: false, distance_meters: 240, eta_seconds: 16,
+      lat: 12.815682, lon: 80.03363, is_rob: false, distance_meters: 240, eta_seconds: 16,
       status: 'CLOSED - TRAIN PASSING IMMINENT', status_code: 'CLOSED', status_level: 'red', status_symbol: '🛑',
       color: '#ef4444', confidence: 'HIGH CONFIDENCE', traffic_density: 'CRITICAL', est_vehicles: 54, telemetry_age: 0.5,
       mobile_telemetry: { mobile_signals: 39, est_vehicles: 54, queue_length_m: 243, clearance_seconds: 135, clearance_formatted: '2m 15s' },
       road_traffic: { road_name: 'SRM Potheri Link Rd (LC 57)', coordinates: [[12.81810, 80.03820], [12.81730, 80.03940], [12.81650, 80.04060]], status: 'CRITICAL', color: '#ef4444', queue_m: 243 }
+    },
+    {
+      gate_id: 'LC58', gate_name: 'LC 58 - Kattankulathur West',
+      lat: 12.810208, lon: 80.02972, is_rob: false,
+      station_before: 'Potheri', station_after: 'Kattankulathur',
+      distance_meters: 1100, eta_seconds: 72,
+      status: 'OPEN - PROBABILISTIC SAFETY BUFFER', status_code: 'OPEN',
+      status_level: 'green', status_symbol: '🟢', color: '#10b981',
+      confidence: 'HIGH CONFIDENCE', traffic_density: 'MODERATE',
+      est_vehicles: 18, telemetry_age: 0.5,
+      mobile_telemetry: {
+        mobile_signals: 13, est_vehicles: 18,
+        queue_length_m: 76, clearance_seconds: 51,
+        clearance_formatted: '0m 51s'
+      }
     },
     {
       gate_id: 'LC59', gate_name: 'LC 59 - Kattankulathur East', station_before: 'Kattankulathur', station_after: 'Maraimalai Nagar',
