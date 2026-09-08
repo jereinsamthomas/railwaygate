@@ -110,6 +110,7 @@
   let trackPolyline = null;
   let trackTiesPolyline = null;
   let trainMarker = null;
+  const allTrainMarkers = {}; // keyed by train_number
   let reroutePolyline = null;
   const gateMarkers = {};
   const stationMarkers = {};
@@ -643,6 +644,47 @@
       }
       if (pulseDot) {
         pulseDot.className = 'pulse-dot';
+      }
+    }
+
+    // Render ALL additional active trains as smaller secondary markers
+    if (data.all_trains && data.all_trains.length > 1) {
+      const activeNumbers = new Set(data.all_trains.map(tr => tr.train_number));
+
+      // Remove stale markers
+      for (const [no, mk] of Object.entries(allTrainMarkers)) {
+        if (!activeNumbers.has(no)) { mk.remove(); delete allTrainMarkers[no]; }
+      }
+
+      for (const tr of data.all_trains) {
+        if (tr.train_number === data.train?.train_number) continue; // skip primary
+        const pos = [tr.lat, tr.lon];
+        const col = tr.color || '#22d3ee';
+        const lbl = tr.type === 'EXP' ? '⚡' : tr.type === 'MEMU' ? '🚃' : '🚊';
+        const typeClass = tr.type === 'EXP' ? 'secondary-train-exp' : 'secondary-train-emu';
+
+        if (allTrainMarkers[tr.train_number]) {
+          allTrainMarkers[tr.train_number].setLatLng(pos);
+          const el = allTrainMarkers[tr.train_number].getElement();
+          if (el) {
+            const spEl = el.querySelector('.sec-speed');
+            if (spEl) spEl.textContent = Math.round(tr.speed) + ' km/h';
+          }
+        } else {
+          const icon = L.divIcon({
+            className: 'secondary-train-marker',
+            html: `<div class="sec-train-pin ${typeClass}" style="border-color:${col}" title="${tr.train_number} - ${tr.name}">
+                     <span class="sec-train-icon">${lbl}</span>
+                     <span class="sec-train-no">${tr.train_number}</span>
+                     <span class="sec-speed">${Math.round(tr.speed)} km/h</span>
+                   </div>`,
+            iconSize: [80, 36],
+            iconAnchor: [40, 18]
+          });
+          const mk = L.marker(pos, {icon, zIndexOffset: 1000}).addTo(map);
+          mk.bindTooltip(`<b>${tr.name} (${tr.train_number})</b><br>${tr.type} • ${Math.round(tr.speed)} km/h<br>${tr.direction}`, {direction:'top'});
+          allTrainMarkers[tr.train_number] = mk;
+        }
       }
     }
   }

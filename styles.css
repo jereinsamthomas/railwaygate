@@ -1876,5 +1876,29 @@ button {
     grid-template-rows: 55% 45%;
   }
 }
-
-
+/* -- Secondary Train Markers ------------------------------------------------ */
+.secondary-train-marker { background: none !important; border: none !important; }
+.sec-train-pin {
+  display: flex; align-items: center; gap: 4px;
+  background: rgba(6,9,19,0.92); border: 2px solid #22d3ee;
+  border-radius: 20px; padding: 4px 8px; white-space: nowrap;
+  font-family: JetBrains Mono, monospace; font-size: 10px; color: #e2e8f0;
+  box-shadow: 0 0 10px rgba(34,211,238,0.35); cursor: pointer;
+  transition: transform 0.2s;
+}
+.sec-train-pin:hover { transform: scale(1.08); }
+.sec-train-exp { border-color: #f59e0b; box-shadow: 0 0 10px rgba(245,158,11,0.4); }
+.sec-train-icon { font-size: 12px; }
+.sec-train-no { font-weight: 700; color: #94a3b8; font-size: 9px; }
+.sec-speed { color: #22d3ee; font-size: 9px; font-weight: 600; }
+.traffic-live-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: rgba(16,185,129,0.15); border: 1px solid #10b981;
+  border-radius: 10px; padding: 2px 6px; font-size: 10px; color: #10b981;
+  font-weight: 600;
+}
+.traffic-sim-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: rgba(148,163,184,0.12); border: 1px solid #64748b;
+  border-radius: 10px; padding: 2px 6px; font-size: 10px; color: #94a3b8;
+}
