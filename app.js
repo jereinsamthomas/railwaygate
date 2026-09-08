@@ -130,39 +130,40 @@
   // =========================================================================
   const DEFAULT_CORRIDOR_DATA = {
     waypoints: [
-      [12.926056, 80.117389],
-      [12.914675, 80.105315],
-      [12.90417, 80.09417],
-      [12.8911, 80.0845],
-      [12.87944, 80.07836],
-      [12.882238, 80.079834],
-      [12.86778, 80.07222],
-      [12.856846, 80.064886],
-      [12.845, 80.05694],
-      [12.833335, 80.04708],
-      [12.82167, 80.03722],
-      [12.813366, 80.031646],
-      [12.8057, 80.0265],
-      [12.801495, 80.02338],
-      [12.79694, 80.02],
-      [12.779165, 80.00972],
-      [12.76139, 79.99944],
-      [12.74611, 79.991665],
-      [12.73083, 79.98389],
-      [12.69306, 79.98028]
+      [12.9247, 80.1157],
+      [12.91274, 80.104416],
+      [12.9017, 80.094],
+      [12.889, 80.0828],
+      [12.8774, 80.07705],
+      [12.880184, 80.07843],
+      [12.8658, 80.0713],
+      [12.855336, 80.064196],
+      [12.844, 80.0565],
+      [12.832379, 80.046687],
+      [12.820757, 80.036874],
+      [12.819258, 80.035599],
+      [12.808982, 80.028541],
+      [12.805558, 80.026634],
+      [12.801202, 80.023541],
+      [12.796482, 80.020191],
+      [12.778741, 80.009996],
+      [12.761, 79.9998],
+      [12.746, 79.9923],
+      [12.731, 79.9848],
+      [12.6925, 79.979]
     ],
     stations: [
-      { code: 'TBM', name: 'Tambaram', lat: 12.926056, lon: 80.117389, seq: 1 },
-      { code: 'PRGL', name: 'Perungalathur', lat: 12.90417, lon: 80.09417, seq: 2 },
-      { code: 'VDR', name: 'Vandalur', lat: 12.8911, lon: 80.0845, seq: 3 },
-      { code: 'UPM', name: 'Urapakkam', lat: 12.86778, lon: 80.07222, seq: 4 },
-      { code: 'GI', name: 'Guduvanchery', lat: 12.845, lon: 80.05694, seq: 5 },
-      { code: 'POTR', name: 'Potheri', lat: 12.82167, lon: 80.03722, seq: 6 },
-      { code: 'CTM', name: 'Kattankulathur', lat: 12.8057, lon: 80.0265, seq: 7 },
-      { code: 'MMNK', name: 'Maraimalai Nagar', lat: 12.79694, lon: 80.02, seq: 8 },
-      { code: 'SKL', name: 'Singaperumal Koil', lat: 12.76139, lon: 79.99944, seq: 9 },
-      { code: 'PWU', name: 'Paranur', lat: 12.73083, lon: 79.98389, seq: 10 },
-      { code: 'CGL', name: 'Chengalpattu Jn', lat: 12.69306, lon: 79.98028, seq: 11 }
+      { code: 'TBM', name: 'Tambaram', lat: 12.9247, lon: 80.1157, seq: 1 },
+      { code: 'PRGL', name: 'Perungalathur', lat: 12.9017, lon: 80.094, seq: 2 },
+      { code: 'VDR', name: 'Vandalur', lat: 12.889, lon: 80.0828, seq: 3 },
+      { code: 'UPM', name: 'Urapakkam', lat: 12.8658, lon: 80.0713, seq: 4 },
+      { code: 'GI', name: 'Guduvanchery', lat: 12.844, lon: 80.0565, seq: 5 },
+      { code: 'POTR', name: 'Potheri', lat: 12.820757, lon: 80.036874, seq: 6 },
+      { code: 'CTM', name: 'Kattankulathur', lat: 12.805558, lon: 80.026634, seq: 7 },
+      { code: 'MMNK', name: 'Maraimalai Nagar', lat: 12.796482, lon: 80.020191, seq: 8 },
+      { code: 'SKL', name: 'Singaperumal Koil', lat: 12.761, lon: 79.9998, seq: 9 },
+      { code: 'PWU', name: 'Paranur', lat: 12.731, lon: 79.9848, seq: 10 },
+      { code: 'CGL', name: 'Chengalpattu Jn', lat: 12.6925, lon: 79.979, seq: 11 }
     ],
     train: {
       train_number: 'EMU 4001',
@@ -178,7 +179,7 @@
   const DEFAULT_PREDICTIONS_DATA = [
     {
       gate_id: 'LC47', gate_name: 'LC 47 - Perungalathur', station_before: 'Tambaram', station_after: 'Perungalathur',
-      lat: 12.914675, lon: 80.105315, is_rob: false, distance_meters: 9500, eta_seconds: 657,
+      lat: 12.91274, lon: 80.104416, is_rob: false, distance_meters: 9500, eta_seconds: 657,
       status: 'OPEN - PROBABILISTIC SAFETY BUFFER', status_code: 'OPEN', status_level: 'green', status_symbol: '🟢',
       color: '#10b981', confidence: 'HIGH CONFIDENCE', traffic_density: 'LOW', est_vehicles: 8, telemetry_age: 0.5,
       mobile_telemetry: { mobile_signals: 6, est_vehicles: 8, queue_length_m: 36, clearance_seconds: 12, clearance_formatted: '0m 12s' },
@@ -186,7 +187,7 @@
     },
     {
       gate_id: 'LC50', gate_name: 'LC 50 - Vandalur Crescent', station_before: 'Vandalur', station_after: 'Urapakkam',
-      lat: 12.87944, lon: 80.07836, is_rob: false, distance_meters: 7300, eta_seconds: 505,
+      lat: 12.8774, lon: 80.07705, is_rob: false, distance_meters: 7300, eta_seconds: 505,
       status: 'OPEN - PROBABILISTIC SAFETY BUFFER', status_code: 'OPEN', status_level: 'green', status_symbol: '🟢',
       color: '#10b981', confidence: 'HIGH CONFIDENCE', traffic_density: 'LOW', est_vehicles: 11, telemetry_age: 0.5,
       mobile_telemetry: { mobile_signals: 8, est_vehicles: 11, queue_length_m: 50, clearance_seconds: 15, clearance_formatted: '0m 15s' },
@@ -194,7 +195,7 @@
     },
     {
       gate_id: 'LC52', gate_name: 'LC 52 - Urapakkam West', station_before: 'Urapakkam', station_after: 'Guduvanchery',
-      lat: 12.856846, lon: 80.064886, is_rob: false, distance_meters: 4600, eta_seconds: 318,
+      lat: 12.855336, lon: 80.064196, is_rob: false, distance_meters: 4600, eta_seconds: 318,
       status: 'APPROACHING - BARRIER CLOSURE PENDING', status_code: 'APPROACHING', status_level: 'yellow', status_symbol: '⏳',
       color: '#eab308', confidence: 'HIGH CONFIDENCE', traffic_density: 'MODERATE', est_vehicles: 22, telemetry_age: 0.5,
       mobile_telemetry: { mobile_signals: 16, est_vehicles: 22, queue_length_m: 99, clearance_seconds: 44, clearance_formatted: '0m 44s' },
@@ -202,7 +203,7 @@
     },
     {
       gate_id: 'LC55', gate_name: 'LC 55 - Guduvanchery Bazaar', station_before: 'Guduvanchery', station_after: 'Potheri',
-      lat: 12.833335, lon: 80.04708, is_rob: false, distance_meters: 2500, eta_seconds: 173,
+      lat: 12.832379, lon: 80.046687, is_rob: false, distance_meters: 2500, eta_seconds: 173,
       status: 'CLOSING - INTERLOCK SEQUENCE INITIATED', status_code: 'CLOSING', status_level: 'orange', status_symbol: '⚠️',
       color: '#f97316', confidence: 'HIGH CONFIDENCE', traffic_density: 'MODERATE', est_vehicles: 31, telemetry_age: 0.5,
       mobile_telemetry: { mobile_signals: 22, est_vehicles: 31, queue_length_m: 140, clearance_seconds: 68, clearance_formatted: '1m 08s' },
@@ -210,7 +211,7 @@
     },
     {
       gate_id: 'LC57', gate_name: 'LC 57 - Potheri / Kattankulathur (SRM Gate)', station_before: 'Potheri', station_after: 'Kattankulathur',
-      lat: 12.815682, lon: 80.03363, is_rob: false, distance_meters: 240, eta_seconds: 16,
+      lat: 12.819258, lon: 80.035599, is_rob: false, distance_meters: 240, eta_seconds: 16,
       status: 'CLOSED - TRAIN PASSING IMMINENT', status_code: 'CLOSED', status_level: 'red', status_symbol: '🛑',
       color: '#ef4444', confidence: 'HIGH CONFIDENCE', traffic_density: 'CRITICAL', est_vehicles: 54, telemetry_age: 0.5,
       mobile_telemetry: { mobile_signals: 39, est_vehicles: 54, queue_length_m: 243, clearance_seconds: 135, clearance_formatted: '2m 15s' },
@@ -218,7 +219,7 @@
     },
     {
       gate_id: 'LC58', gate_name: 'LC 58 - Kattankulathur West',
-      lat: 12.810208, lon: 80.02972, is_rob: false,
+      lat: 12.808982, lon: 80.028541, is_rob: false,
       station_before: 'Potheri', station_after: 'Kattankulathur',
       distance_meters: 1100, eta_seconds: 72,
       status: 'OPEN - PROBABILISTIC SAFETY BUFFER', status_code: 'OPEN',
@@ -233,7 +234,7 @@
     },
     {
       gate_id: 'LC59', gate_name: 'LC 59 - Kattankulathur East', station_before: 'Kattankulathur', station_after: 'Maraimalai Nagar',
-      lat: 12.801495, lon: 80.02338, is_rob: false, distance_meters: 850, eta_seconds: 58,
+      lat: 12.801202, lon: 80.023541, is_rob: false, distance_meters: 850, eta_seconds: 58,
       status: 'CLOSED - TRAIN PASSING IMMINENT', status_code: 'CLOSED', status_level: 'red', status_symbol: '🛑',
       color: '#ef4444', confidence: 'HIGH CONFIDENCE', traffic_density: 'HEAVY', est_vehicles: 26, telemetry_age: 0.5,
       mobile_telemetry: { mobile_signals: 19, est_vehicles: 26, queue_length_m: 117, clearance_seconds: 65, clearance_formatted: '1m 05s' },
@@ -241,7 +242,7 @@
     },
     {
       gate_id: 'LC61', gate_name: 'LC 61 - Maraimalai Nagar Ind.', station_before: 'Maraimalai Nagar', station_after: 'Singaperumal Koil',
-      lat: 12.779165, lon: 80.00972, is_rob: false, distance_meters: 3700, eta_seconds: 256,
+      lat: 12.778741, lon: 80.009996, is_rob: false, distance_meters: 3700, eta_seconds: 256,
       status: 'APPROACHING - BARRIER CLOSURE PENDING', status_code: 'APPROACHING', status_level: 'yellow', status_symbol: '⏳',
       color: '#eab308', confidence: 'HIGH CONFIDENCE', traffic_density: 'LOW', est_vehicles: 14, telemetry_age: 0.5,
       mobile_telemetry: { mobile_signals: 10, est_vehicles: 14, queue_length_m: 63, clearance_seconds: 28, clearance_formatted: '0m 28s' },
@@ -249,7 +250,7 @@
     },
     {
       gate_id: 'LC64', gate_name: 'LC 64 - Singaperumal Koil', station_before: 'Singaperumal Koil', station_after: 'Paranur',
-      lat: 12.74611, lon: 79.991665, is_rob: false, distance_meters: 7100, eta_seconds: 491,
+      lat: 12.746, lon: 79.9923, is_rob: false, distance_meters: 7100, eta_seconds: 491,
       status: 'OPEN - PROBABILISTIC SAFETY BUFFER', status_code: 'OPEN', status_level: 'green', status_symbol: '🟢',
       color: '#10b981', confidence: 'HIGH CONFIDENCE', traffic_density: 'LOW', est_vehicles: 9, telemetry_age: 0.5,
       mobile_telemetry: { mobile_signals: 6, est_vehicles: 9, queue_length_m: 41, clearance_seconds: 14, clearance_formatted: '0m 14s' },
@@ -257,7 +258,7 @@
     },
     {
       gate_id: 'LC67', gate_name: 'LC 67 - Paranur MWC', station_before: 'Paranur', station_after: 'Chengalpattu',
-      lat: 12.711945, lon: 79.982085, is_rob: false, distance_meters: 10800, eta_seconds: 747,
+      lat: 12.71175, lon: 79.9819, is_rob: false, distance_meters: 10800, eta_seconds: 747,
       status: 'OPEN - PROBABILISTIC SAFETY BUFFER', status_code: 'OPEN', status_level: 'green', status_symbol: '🟢',
       color: '#10b981', confidence: 'HIGH CONFIDENCE', traffic_density: 'LOW', est_vehicles: 12, telemetry_age: 0.5,
       mobile_telemetry: { mobile_signals: 9, est_vehicles: 12, queue_length_m: 54, clearance_seconds: 18, clearance_formatted: '0m 18s' },
@@ -265,7 +266,7 @@
     },
     {
       gate_id: 'ROB_VDR', gate_name: 'Vandalur Over Bridge (Flyover)', station_before: 'Vandalur', station_after: 'Urapakkam',
-      lat: 12.882238, lon: 80.079834, is_rob: true, distance_meters: 0, eta_seconds: 0,
+      lat: 12.880184, lon: 80.07843, is_rob: true, distance_meters: 0, eta_seconds: 0,
       status: 'ALWAYS OPEN (ROB/FLYOVER)', status_code: 'OPEN', status_level: 'green', status_symbol: '🟢',
       color: '#38bdf8', confidence: 'HIGH CONFIDENCE', traffic_density: 'MODERATE', est_vehicles: 12, telemetry_age: 0.5,
       mobile_telemetry: { mobile_signals: 9, est_vehicles: 12, queue_length_m: 0, clearance_seconds: 0, clearance_formatted: 'FREE FLOW' },
@@ -304,7 +305,7 @@
   function initMap() {
     // Centered around Potheri / Kattankulathur (mid-corridor)
     map = L.map('corridorMap', {
-      center: [12.813366, 80.031646],
+      center: [12.819258, 80.035599],
       zoom: 13,
       zoomControl: true
     });
@@ -386,7 +387,7 @@
     if (btnSpotLC57) {
       btnSpotLC57.addEventListener('click', () => {
         if (map) {
-          map.flyTo([12.813366, 80.031646], 16, { duration: 0.8 });
+          map.flyTo([12.819258, 80.035599], 16, { duration: 0.8 });
           if (gateMarkers['LC57']) gateMarkers['LC57'].openTooltip();
           showToast('Target: LC 57 (Between Potheri & Kattankulathur)', 'info');
         }
@@ -1025,7 +1026,7 @@
 
       // Zoom map directly to LC 57 between Potheri and Kattankulathur
       if (map) {
-        map.flyTo([12.813366, 80.031646], 16, { duration: 1.0 });
+        map.flyTo([12.819258, 80.035599], 16, { duration: 1.0 });
         if (gateMarkers['LC57']) {
           gateMarkers['LC57'].openTooltip();
         }
@@ -1735,7 +1736,7 @@
 
     function focusLC57() {
       if (map) {
-        map.flyTo([12.813366, 80.031646], 15, { duration: 1.0 });
+        map.flyTo([12.819258, 80.035599], 15, { duration: 1.0 });
         if (gateMarkers['LC57']) {
           gateMarkers['LC57'].openTooltip();
         }
