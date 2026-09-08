@@ -1,30 +1,30 @@
 
 // ── TBM-CGL Corridor Physics Engine ──────────────────────────────────────────
 const STATIONS = [
-  { code:'TBM',  name:'Tambaram',         lat:12.92559, lon:80.12711, seq:1  },
-  { code:'PRGL', name:'Perungalathur',    lat:12.90157, lon:80.09682, seq:2  },
-  { code:'VDR',  name:'Vandalur',         lat:12.88315, lon:80.08053, seq:3  },
-  { code:'UPM',  name:'Urapakkam',        lat:12.86508, lon:80.06730, seq:4  },
-  { code:'GI',   name:'Guduvanchery',     lat:12.84330, lon:80.05638, seq:5  },
-  { code:'POTR', name:'Potheri',          lat:12.82133, lon:80.04430, seq:6  },
-  { code:'CTM',  name:'Kattankulathur',   lat:12.81327, lon:80.03440, seq:7  },
-  { code:'MMNK', name:'Maraimalai Nagar', lat:12.79558, lon:80.02430, seq:8  },
-  { code:'SKL',  name:'Singaperumal Koil',lat:12.76068, lon:80.00540, seq:9  },
-  { code:'PWU',  name:'Paranur',          lat:12.72820, lon:79.99240, seq:10 },
-  { code:'CGL',  name:'Chengalpattu Jn', lat:12.69240, lon:79.97630, seq:11 }
+  {code:'TBM',name:'Tambaram',lat:12.926056,lon:80.117389,seq:1},
+  {code:'PRGL',name:'Perungalathur',lat:12.90417,lon:80.09417,seq:2},
+  {code:'VDR',name:'Vandalur',lat:12.8911,lon:80.0845,seq:3},
+  {code:'UPM',name:'Urapakkam',lat:12.86778,lon:80.07222,seq:4},
+  {code:'GI',name:'Guduvanchery',lat:12.845,lon:80.05694,seq:5},
+  {code:'POTR',name:'Potheri',lat:12.82167,lon:80.03722,seq:6},
+  {code:'CTM',name:'Kattankulathur',lat:12.8057,lon:80.0265,seq:7},
+  {code:'MMNK',name:'Maraimalai Nagar',lat:12.79694,lon:80.02,seq:8},
+  {code:'SKL',name:'Singaperumal Koil',lat:12.76139,lon:79.99944,seq:9},
+  {code:'PWU',name:'Paranur',lat:12.73083,lon:79.98389,seq:10},
+  {code:'CGL',name:'Chengalpattu Jn',lat:12.69306,lon:79.98028,seq:11},
 ];
 
 const GATES = [
-  { id:'LC47',    name:'LC 47 - Perungalathur',               lat:12.91300, lon:80.11160, is_rob:false, station_before:'Tambaram',         station_after:'Perungalathur'    },
-  { id:'LC50',    name:'LC 50 - Vandalur Crescent',           lat:12.87660, lon:80.07750, is_rob:false, station_before:'Vandalur',          station_after:'Urapakkam'        },
-  { id:'LC52',    name:'LC 52 - Urapakkam West',              lat:12.85440, lon:80.06200, is_rob:false, station_before:'Urapakkam',         station_after:'Guduvanchery'     },
-  { id:'LC55',    name:'LC 55 - Guduvanchery Bazaar',         lat:12.83320, lon:80.05040, is_rob:false, station_before:'Guduvanchery',      station_after:'Potheri'          },
-  { id:'LC57',    name:'LC 57 - Potheri/Kattankulathur (SRM)',lat:12.81730, lon:80.03940, is_rob:false, station_before:'Potheri',           station_after:'Kattankulathur'   },
-  { id:'LC59',    name:'LC 59 - Kattankulathur East',         lat:12.80440, lon:80.02940, is_rob:false, station_before:'Kattankulathur',    station_after:'Maraimalai Nagar' },
-  { id:'LC61',    name:'LC 61 - Maraimalai Nagar Ind.',       lat:12.77810, lon:80.01490, is_rob:false, station_before:'Maraimalai Nagar',  station_after:'Singaperumal Koil'},
-  { id:'LC64',    name:'LC 64 - Singaperumal Koil',           lat:12.74450, lon:80.00320, is_rob:false, station_before:'Singaperumal Koil', station_after:'Paranur'          },
-  { id:'LC67',    name:'LC 67 - Paranur MWC',                 lat:12.71030, lon:79.98440, is_rob:false, station_before:'Paranur',           station_after:'Chengalpattu'     },
-  { id:'ROB_VDR', name:'Vandalur Over Bridge (Flyover)',       lat:12.88690, lon:80.08260, is_rob:true,  station_before:'Vandalur',          station_after:'Urapakkam'        }
+  {id:'LC47',name:'LC 47 - Perungalathur',lat:12.914675,lon:80.105315,is_rob:false,station_before:'Tambaram',station_after:'Perungalathur'},
+  {id:'LC50',name:'LC 50 - Vandalur Crescent',lat:12.87944,lon:80.07836,is_rob:false,station_before:'Vandalur',station_after:'Urapakkam'},
+  {id:'LC52',name:'LC 52 - Urapakkam West',lat:12.856846,lon:80.064886,is_rob:false,station_before:'Urapakkam',station_after:'Guduvanchery'},
+  {id:'LC55',name:'LC 55 - Guduvanchery Bazaar',lat:12.833335,lon:80.04708,is_rob:false,station_before:'Guduvanchery',station_after:'Potheri'},
+  {id:'LC57',name:'LC 57 - Potheri/Kattankulathur (SRM)',lat:12.813366,lon:80.031646,is_rob:false,station_before:'Potheri',station_after:'Kattankulathur'},
+  {id:'LC59',name:'LC 59 - Kattankulathur East',lat:12.801495,lon:80.02338,is_rob:false,station_before:'Kattankulathur',station_after:'Maraimalai Nagar'},
+  {id:'LC61',name:'LC 61 - Maraimalai Nagar Ind.',lat:12.779165,lon:80.00972,is_rob:false,station_before:'Maraimalai Nagar',station_after:'Singaperumal Koil'},
+  {id:'LC64',name:'LC 64 - Singaperumal Koil',lat:12.74611,lon:79.991665,is_rob:false,station_before:'Singaperumal Koil',station_after:'Paranur'},
+  {id:'LC67',name:'LC 67 - Paranur MWC',lat:12.711945,lon:79.982085,is_rob:false,station_before:'Paranur',station_after:'Chengalpattu'},
+  {id:'ROB_VDR',name:'Vandalur Over Bridge (Flyover)',lat:12.882238,lon:80.079834,is_rob:true,station_before:'Vandalur',station_after:'Urapakkam'},
 ];
 
 // Total corridor length ~50 km. Train speed ~52 km/h → full run ~58 min
